@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
 import { useWeb3React, UnsupportedChainIdError, Web3ReactProvider } from '@web3-react/core';
 import {
   NoEthereumProviderError,
@@ -8,11 +7,14 @@ import {
 } from '@web3-react/injected-connector'
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
+import { ethers } from 'ethers';
 
 import { injected } from '../connectors';
 import { useEagerConnect, useInactiveListener } from '../hooks';
 import styles from '../styles/Home.module.css'
 import { Spinner } from './components/Spinner';
+import { ERC20Service } from '../services/erc20';
+import { DAI } from '../constants/contracts';
 
 enum ConnectorNames {
   Injected = 'Injected'
@@ -20,12 +22,6 @@ enum ConnectorNames {
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
   [ConnectorNames.Injected]: injected
-}
-
-const getLibrary = (provider: any): Web3Provider => {
-  const library = new Web3Provider(provider);
-  library.pollingInterval = 12000;
-  return library;
 }
 
 const Account = () => {
@@ -51,7 +47,7 @@ const Account = () => {
 const Balance = () => {
   const { account, library, chainId } = useWeb3React()
 
-  const [balance, setBalance] = useState();
+  const [balance, setBalance] = useState(); // change to redux
   useEffect((): any => {
       if (!!account && !!library) {
           let stale = false
@@ -60,17 +56,20 @@ const Balance = () => {
               .getBalance(account)
               .then((balance: any) => {
                   if (!stale) {
+                      // change to redux
                       setBalance(balance)
                   }
               })
               .catch(() => {
                   if (!stale) {
+                      // change to redux
                       setBalance(null)
                   }
               })
 
           return () => {
               stale = true
+              // change to redux
               setBalance(undefined)
           }
       }
@@ -87,9 +86,48 @@ const Balance = () => {
   )
 }
 
-export default function Home() {
+const DaiBalance = (props) => {
+  const { account } = useWeb3React();
+  const [daiBalance, setDaiBalance] = useState();
+
+  useEffect(() => {
+    getBalance();
+  }, [account]);
+
+  const getBalance = async () => {
+    const balance = await props.instance.balanceOf(account);
+    setDaiBalance(balance);
+  }
+
+  return (
+    <>
+          <span>DAI Balance</span>
+          <span role="img" aria-label="gold">
+              💰
+    </span>
+          <span>{daiBalance === null ? 'Error' : daiBalance ? `Ξ${formatEther(daiBalance)}` : ''}</span>
+      </>
+  );
+}
+
+const erc20Abi = [
+  'function allowance(address owner, address spender) external view returns (uint256)',
+  'function approve(address spender, uint256 amount) external returns (bool)',
+  'function balanceOf(address marketMaker) external view returns (uint256)',
+  'function symbol() external view returns (string)',
+  'function name() external view returns (string)',
+  'function decimals() external view returns (uint8)',
+  'function transferFrom(address sender, address recipient, uint256 amount) public returns (bool)',
+  'function transfer(address to, uint256 value) public returns (bool)',
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+]
+
+const Home = () => {
   const context = useWeb3React<Web3Provider>();
   const { connector, library, chainId, account, activate, deactivate, active, error } = context;
+
+  const daiInstance = new ethers.Contract(DAI, erc20Abi, library?.getSigner());
+  // console.log('daiInstance:', daiInstance);
 
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>();
@@ -116,17 +154,14 @@ export default function Home() {
       </Head>
 
       <h1>DeFi Frontend</h1>
-      <Account />
-      <Balance />
-
       <div
-        style={{
-          display: 'grid',
-          gridGap: '1rem',
-          gridTemplateColumns: '1fr 1fr',
-          maxWidth: '20rem',
-          margin: 'auto'
-        }}
+        // style={{
+        //   display: 'grid',
+        //   gridGap: '1rem',
+        //   gridTemplateColumns: '1fr 1fr',
+        //   maxWidth: '20rem',
+        //   margin: 'auto'
+        // }}
       >
         {Object.keys(connectorsByName).map(name => {
           const currentConnector = connectorsByName[name]
@@ -174,6 +209,12 @@ export default function Home() {
           )
         })}
       </div>
+
+      <Account />
+      <Balance />
+      <DaiBalance instance={daiInstance} />
     </div>
   )
 }
+
+export default Home;

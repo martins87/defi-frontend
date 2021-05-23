@@ -3,7 +3,8 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 const POLLING_INTERVAL = 12000
 const RPC_URLS: { [chainId: number]: string } = {
   1: process.env.RPC_URL_1 as string,
-  4: process.env.RPC_URL_4 as string
+  3: 'https://ropsten.infura.io/v3/8d810610fe7741cc9753cbaafb1f000c',
 }
 
-export const injected = new InjectedConnector({ supportedChainIds: [1, 3, 4, 5, 42, 1337] })
+// Interaction only with Ropsten network
+export const injected = new InjectedConnector({ supportedChainIds: [3] })
