@@ -6,7 +6,6 @@ import {
   UserRejectedRequestError as UserRejectedRequestErrorInjected
 } from '@web3-react/injected-connector'
 import { Web3Provider } from '@ethersproject/providers';
-import { formatEther } from '@ethersproject/units';
 import { ethers } from 'ethers';
 
 import { injected } from '../connectors';
@@ -15,6 +14,9 @@ import styles from '../styles/Home.module.css'
 import { Spinner } from './components/Spinner';
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
+import { Account } from '../components/Account';
+import { Balance } from '../components/Balance';
+import { DaiBalance } from '../components/DaiBalance';
 
 enum ConnectorNames {
   Injected = 'Injected'
@@ -22,92 +24,6 @@ enum ConnectorNames {
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
   [ConnectorNames.Injected]: injected
-}
-
-const Account = () => {
-  const { account } = useWeb3React()
-
-  return (
-      <>
-          <span>Account</span>
-          <span role="img" aria-label="robot">
-              🤖
-    </span>
-          <span>
-              {account === null
-                  ? '-'
-                  : account
-                      ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}`
-                      : ''}
-          </span>
-      </>
-  )
-}
-
-const Balance = () => {
-  const { account, library, chainId } = useWeb3React()
-
-  const [balance, setBalance] = useState(); // change to redux
-  useEffect((): any => {
-      if (!!account && !!library) {
-          let stale = false
-
-          library
-              .getBalance(account)
-              .then((balance: any) => {
-                  if (!stale) {
-                      // change to redux
-                      setBalance(balance)
-                  }
-              })
-              .catch(() => {
-                  if (!stale) {
-                      // change to redux
-                      setBalance(null)
-                  }
-              })
-
-          return () => {
-              stale = true
-              // change to redux
-              setBalance(undefined)
-          }
-      }
-  }, [account, library, chainId]) // ensures refresh if referential identity of library doesn't change across chainIds
-
-  return (
-      <>
-          <span>Balance</span>
-          <span role="img" aria-label="gold">
-              💰
-    </span>
-          <span>{balance === null ? 'Error' : balance ? `Ξ${formatEther(balance)}` : ''}</span>
-      </>
-  )
-}
-
-const DaiBalance = (props) => {
-  const { account } = useWeb3React();
-  const [daiBalance, setDaiBalance] = useState();
-
-  useEffect(() => {
-    getBalance();
-  }, [account]);
-
-  const getBalance = async () => {
-    const balance = await props.instance.balanceOf(account);
-    setDaiBalance(balance);
-  }
-
-  return (
-    <>
-          <span>DAI Balance</span>
-          <span role="img" aria-label="gold">
-              💰
-    </span>
-          <span>{daiBalance === null ? 'Error' : daiBalance ? `Ξ${formatEther(daiBalance)}` : ''}</span>
-      </>
-  );
 }
 
 const erc20Abi = [
