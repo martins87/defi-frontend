@@ -4,8 +4,8 @@ import { formatEther } from '@ethersproject/units';
 
 export const Balance = () => {
     const { account, library, chainId } = useWeb3React()
-  
     const [balance, setBalance] = useState(); // change to redux
+    
     useEffect((): any => {
         if (!!account && !!library) {
             let stale = false

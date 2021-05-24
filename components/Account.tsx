@@ -5,7 +5,7 @@ export const Account = () => {
 
   return (
     <>
-      <p>Account: 
+      <p>Account:
         {/* <span role="img" aria-label="robot">
           🤖
         </span> */}

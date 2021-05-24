@@ -20,13 +20,11 @@ export class ERC20Service {
 
   constructor(provider: any, contractAddress: string) {
     this.provider = provider
-    console.log('[erc20] provider:', this.provider);
     const signer: Wallet = provider.getSigner()
     this.contract = new ethers.Contract(contractAddress, erc20Abi, provider).connect(signer)
   }
   
   balanceOf = async (owner: string): Promise<BigNumber> => {
-    console.log('[erc20] provider:', this.provider);
     return await this.contract.balanceOf(owner)
   }
 

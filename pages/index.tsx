@@ -8,43 +8,45 @@ import {
 import { Web3Provider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 
-import { injected } from '../connectors';
+import { injected, network } from '../connectors';
 import { useEagerConnect, useInactiveListener } from '../hooks';
 import styles from '../styles/Home.module.css'
 import { Spinner } from './components/Spinner';
-import { ERC20Service } from '../services/erc20';
-import { DAI } from '../constants/contracts';
 import { Account } from '../components/Account';
 import { Balance } from '../components/Balance';
 import { DaiBalance } from '../components/DaiBalance';
 import Form from '../components/Form';
 
 enum ConnectorNames {
-  Injected = 'Injected'
+  Injected = 'Injected',
+  Network = 'Network'
 }
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
-  [ConnectorNames.Injected]: injected
+  [ConnectorNames.Injected]: injected,
+  [ConnectorNames.Network]: network
 }
 
-const erc20Abi = [
-  'function allowance(address owner, address spender) external view returns (uint256)',
-  'function approve(address spender, uint256 amount) external returns (bool)',
-  'function balanceOf(address marketMaker) external view returns (uint256)',
-  'function symbol() external view returns (string)',
-  'function name() external view returns (string)',
-  'function decimals() external view returns (uint8)',
-  'function transferFrom(address sender, address recipient, uint256 amount) public returns (bool)',
-  'function transfer(address to, uint256 value) public returns (bool)',
-  'event Transfer(address indexed from, address indexed to, uint256 value)',
-]
+const getErrorMessage = (error: Error) => {
+  if (error instanceof NoEthereumProviderError) {
+    return 'No Ethereum browser extension detected, install MetaMask on desktop or visit from a dApp browser on mobile.'
+  } else if (error instanceof UnsupportedChainIdError) {
+    return "You're connected to an unsupported network."
+  } else if (
+    error instanceof UserRejectedRequestErrorInjected //||
+    // error instanceof UserRejectedRequestErrorWalletConnect ||
+    // error instanceof UserRejectedRequestErrorFrame
+  ) {
+    return 'Please authorize this website to access your Ethereum account.'
+  } else {
+    console.error(error)
+    return 'An unknown error occurred. Check the console for more details.'
+  }
+}
 
 const Home = () => {
   const context = useWeb3React<Web3Provider>();
   const { connector, library, chainId, account, activate, deactivate, active, error } = context;
-
-  const daiInstance = new ethers.Contract(DAI, erc20Abi, library?.getSigner());
-  // console.log('daiInstance:', daiInstance);
 
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>();
@@ -72,13 +74,13 @@ const Home = () => {
 
       <h1>DeFi Frontend</h1>
       <div
-        // style={{
-        //   display: 'grid',
-        //   gridGap: '1rem',
-        //   gridTemplateColumns: '1fr 1fr',
-        //   maxWidth: '20rem',
-        //   margin: 'auto'
-        // }}
+      // style={{
+      //   display: 'grid',
+      //   gridGap: '1rem',
+      //   gridTemplateColumns: '1fr 1fr',
+      //   maxWidth: '20rem',
+      //   margin: 'auto'
+      // }}
       >
         {Object.keys(connectorsByName).map(name => {
           const currentConnector = connectorsByName[name]
@@ -127,10 +129,46 @@ const Home = () => {
         })}
       </div>
 
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {(active || error) && (
+          <button
+            style={{
+              height: '3rem',
+              marginTop: '2rem',
+              borderRadius: '1rem',
+              borderColor: 'red',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              deactivate()
+            }}
+          >
+            Deactivate
+          </button>
+        )}
+
+        {!!error && <h4 style={{ marginTop: '1rem', marginBottom: '0' }}>{getErrorMessage(error)}</h4>}
+      </div>
+
+      {!!(connector === connectorsByName[ConnectorNames.Network] && chainId) && (
+        <button
+          style={{
+            height: '3rem',
+            borderRadius: '1rem',
+            cursor: 'pointer'
+          }}
+          onClick={() => {
+            ; (connector as any).changeChainId(chainId === 1 ? 4 : 1)
+          }}
+        >
+          Switch Networks
+        </button>
+      )}
+
       <Account />
       <Balance />
-      <DaiBalance instance={daiInstance} />
-      <Form instance={daiInstance}/> 
+      <DaiBalance />
+      {/* <Form instance={daiInstance}/>  */}
     </div>
   )
 }
