@@ -17,6 +17,7 @@ import { DAI } from '../constants/contracts';
 import { Account } from '../components/Account';
 import { Balance } from '../components/Balance';
 import { DaiBalance } from '../components/DaiBalance';
+import Form from '../components/Form';
 
 enum ConnectorNames {
   Injected = 'Injected'
@@ -129,6 +130,7 @@ const Home = () => {
       <Account />
       <Balance />
       <DaiBalance instance={daiInstance} />
+      <Form /> 
     </div>
   )
 }

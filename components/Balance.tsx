@@ -35,11 +35,12 @@ export const Balance = () => {
   
     return (
         <>
-            <span>Balance</span>
-            <span role="img" aria-label="gold">
-                💰
-      </span>
-            <span>{balance === null ? 'Error' : balance ? `Ξ${formatEther(balance)}` : ''}</span>
+            <p>Balance:
+                {/* <span role="img" aria-label="gold">
+                    💰
+                </span> */}
+                <span>{balance === null ? 'Error' : balance ? ` Ξ${formatEther(balance)}` : ''}</span>
+            </p>
         </>
     )
   }
