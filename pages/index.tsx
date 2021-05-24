@@ -130,7 +130,7 @@ const Home = () => {
       <Account />
       <Balance />
       <DaiBalance instance={daiInstance} />
-      <Form /> 
+      <Form instance={daiInstance}/> 
     </div>
   )
 }

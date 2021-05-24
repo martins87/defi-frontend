@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import Button from '@material-ui/core/Button';
+import { Button, Link } from '@material-ui/core';
 
-const Form = () => {
+const Form = (props) => {
   const [daiAmount, setDaiAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
+  const [txLink, setTxLink] = useState('');
 
   const daiInputChangeHandler = (event: any) => {
     setDaiAmount(event.target.value);
@@ -18,6 +19,13 @@ const Form = () => {
 
     console.log('daiAmount:', daiAmount);
     console.log('recipient:', recipientAddress); 
+    transfer(recipientAddress, daiAmount);
+  }
+
+  const transfer = async (recipient: any, amount: any) => {
+    const tx = await props.instance.transfer(recipientAddress, daiAmount);
+    setTxLink(`https://ropsten.etherscan.io/tx/${tx.hash}`);
+    console.log('tx:', tx);
   }
 
   return (
@@ -31,6 +39,9 @@ const Form = () => {
         <input type="text" id="recipientAddress" onChange={addressInputChangeHandler}/>
       </div>
       <Button onClick={formSubmissionHandler} variant='contained'>Send</Button>
+      {txLink.length > 0 ? <Link href={txLink}>
+        View transaction on Etherscan
+      </Link> : null}
     </form>
   )
 }
