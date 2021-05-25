@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { useWeb3React } from '@web3-react/core'
 
-import { injected } from './connectors'
+import { injected } from './connectors';
+import type { AppDispatch, RootState } from './state/store';
 
 export function useEagerConnect() {
   const { activate, active } = useWeb3React()
@@ -71,3 +73,6 @@ export function useInactiveListener(suppress: boolean = false) {
     }
   }, [active, error, suppress, activate])
 }
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
