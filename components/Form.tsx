@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import { Button, Link } from '@material-ui/core';
+import { useWeb3React } from '@web3-react/core';
 
-const Form = (props) => {
-  const [daiAmount, setDaiAmount] = useState('');
-  const [recipientAddress, setRecipientAddress] = useState('');
+import { ERC20Service } from '../services/erc20';
+import { DAI } from '../constants/contracts';
+
+const Form = () => {
+  const { library } = useWeb3React();
+  const [daiAmount, setDaiAmount] = useState();
+  const [recipientAddress, setRecipientAddress] = useState();
   const [txLink, setTxLink] = useState('');
 
   const daiInputChangeHandler = (event: any) => {
@@ -23,7 +28,8 @@ const Form = (props) => {
   }
 
   const transfer = async (recipient: any, amount: any) => {
-    const tx = await props.instance.transfer(recipientAddress, daiAmount);
+    const erc20 = new ERC20Service(library, DAI);
+    const tx = await erc20.transfer(recipientAddress, daiAmount);
     setTxLink(`https://ropsten.etherscan.io/tx/${tx.hash}`);
     console.log('tx:', tx);
   }
