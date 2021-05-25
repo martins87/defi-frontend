@@ -12,7 +12,9 @@ const Form = () => {
   const [txLink, setTxLink] = useState('');
 
   const daiInputChangeHandler = (event: any) => {
-    setDaiAmount(event.target.value);
+    const amount: number = +event.target.value * 10**18;
+    setDaiAmount(amount.toString());
+    console.log('dai amount:', amount);
   }
 
   const addressInputChangeHandler = (event: any) => {

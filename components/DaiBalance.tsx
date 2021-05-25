@@ -4,7 +4,7 @@ import { formatEther } from '@ethersproject/units';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
-import { update } from '../state/daiDalanceSlice';
+import { update } from '../state/daiBalanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 export const DaiBalance = () => {
