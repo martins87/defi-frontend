@@ -4,13 +4,18 @@ import { formatEther } from '@ethersproject/units';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
+import { update } from '../state/daiDalanceSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 export const DaiBalance = () => {
   const { account, library, chainId } = useWeb3React();
-  const [daiBalance, setDaiBalance] = useState<string>();
+  // const [daiBalance, setDaiBalance] = useState<string>();
+  const dispatch = useAppDispatch();
+  const { balance } = useAppSelector(state => state.daiBalance);
+  console.log('DAI balance from redux-toolkit store:', balance);
 
   useEffect(() => {
-    setDaiBalance('');
+    dispatch(update(''));
     if (!!account && !!library) {
       const erc20 = new ERC20Service(library, DAI);
       getBalance(erc20);
@@ -19,7 +24,7 @@ export const DaiBalance = () => {
 
   const getBalance = async (contractInstance: any) => {
     const balance = await contractInstance.balanceOf(account);
-    setDaiBalance(balance);
+    dispatch(update(balance.toString()));
   }
 
   return (
@@ -28,7 +33,7 @@ export const DaiBalance = () => {
         {/* <span role="img" aria-label="gold">
           💰
         </span> */}
-        <span>{account === null ? 'Error' : daiBalance ? ` ${formatEther(daiBalance)}` : ''}</span>
+        <span>{account === null ? 'Error' : balance ? ` ${formatEther(balance)}` : ''}</span>
       </p>
     </>
   );

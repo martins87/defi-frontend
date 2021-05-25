@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useWeb3React } from "@web3-react/core";
 import { formatEther } from '@ethersproject/units';
 
-import { update } from '../state/balanceSlice';
+import { update } from '../state/ethBalanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 export const Balance = () => {
   const { account, library, chainId } = useWeb3React()
   // const [balance, setBalance] = useState(); // change to redux
   const dispatch = useAppDispatch();
-  const { balance } = useAppSelector(state => state.balance);
+  const { balance } = useAppSelector(state => state.ethBalance);
   console.log('ETH balance from redux-toolkit store:', balance);
 
   useEffect((): any => {
