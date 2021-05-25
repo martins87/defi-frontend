@@ -1,18 +1,40 @@
 import React, { useState } from 'react'
-import { Button, Link } from '@material-ui/core';
+import { Button, Input, Link, makeStyles } from '@material-ui/core';
 import { useWeb3React } from '@web3-react/core';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  button: {
+    background: 'blue',
+    color: 'white',
+    fontFamily: 'sans-serif'
+  },
+  input: {
+    background: '#EDEDED',
+    padding: '1rem',
+    border: 'none',
+    marginBottom: '1rem'
+  },
+  text: {
+    color: 'gray'
+  }
+}));
 
 const Form = () => {
   const { library } = useWeb3React();
   const [daiAmount, setDaiAmount] = useState();
   const [recipientAddress, setRecipientAddress] = useState();
   const [txLink, setTxLink] = useState('');
+  const classes = useStyles();
 
   const daiInputChangeHandler = (event: any) => {
-    const amount: number = +event.target.value * 10**18;
+    const amount: number = +event.target.value * 10 ** 18;
     setDaiAmount(amount.toString());
     console.log('dai amount:', amount);
   }
@@ -25,8 +47,14 @@ const Form = () => {
     event.preventDefault();
 
     console.log('daiAmount:', daiAmount);
-    console.log('recipient:', recipientAddress); 
-    transfer(recipientAddress, daiAmount);
+    console.log('recipient:', recipientAddress);
+
+    // TODO validation...
+    if (true) {
+      transfer(recipientAddress, daiAmount);
+    } else {
+      // UI alert stuff
+    }
   }
 
   const transfer = async (recipient: any, amount: any) => {
@@ -37,16 +65,12 @@ const Form = () => {
   }
 
   return (
-    <form>
-      <div className='form-control'>
-        <label htmlFor="daiAmount">Enter DAI amount</label>
-        <input type="text" id="daiAmount" onChange={daiInputChangeHandler} />
-      </div>
-      <div className='form-control'>
-        <label htmlFor="recipientAddress">Enter recipient address</label>
-        <input type="text" id="recipientAddress" onChange={addressInputChangeHandler}/>
-      </div>
-      <Button onClick={formSubmissionHandler} variant='contained'>Send</Button>
+    <form className={classes.root}>
+      <label className={classes.text} htmlFor="daiAmount">Enter DAI amount</label>
+      <input className={classes.input} type="text" id="daiAmount" onChange={daiInputChangeHandler} />
+      <label className={classes.text} htmlFor="recipientAddress">Enter recipient address</label>
+      <input className={classes.input} type="text" id="recipientAddress" onChange={addressInputChangeHandler} />
+      <Button className={classes.button} onClick={formSubmissionHandler} variant='contained'>SEND</Button>
       {txLink.length > 0 ? <Link href={txLink}>
         View transaction on Etherscan
       </Link> : null}
