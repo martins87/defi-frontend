@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
+import { DaiBalance } from './DaiBalance'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,16 +14,30 @@ const useStyles = makeStyles(theme => ({
   button: {
     background: 'blue',
     color: 'white',
-    fontFamily: 'sans-serif'
+    fontFamily: 'sans-serif',
+    marginBottom: '1rem',
+    margin: 'auto',
+    fontSize: '8px !important',
   },
   input: {
     background: '#EDEDED',
-    padding: '1rem',
+    width: '400px',
+    padding: '2rem 1rem 0.4rem 1rem',
     border: 'none',
-    marginBottom: '1rem'
+    marginTop: '-20px',
+    marginBottom: '1rem',
+    borderRadius: '4px',
+    zIndex: '1',
+    verticalAlign: 'bottom'
   },
   text: {
-    color: 'gray'
+    marginLeft: '1rem',
+    fontSize: '12px',
+    color: '#404040',
+    zIndex: '2'
+  },
+  link: {
+    margin: 'auto'
   }
 }));
 
@@ -66,14 +81,17 @@ const Form = () => {
 
   return (
     <form className={classes.root}>
-      <label className={classes.text} htmlFor="daiAmount">Enter DAI amount</label>
-      <input className={classes.input} type="text" id="daiAmount" onChange={daiInputChangeHandler} />
+      <label className={classes.text} htmlFor="daiAmount">Enter DAI Amount</label>
+      <input className={classes.input} type="number" id="daiAmount" onChange={daiInputChangeHandler} />
+      <DaiBalance />
       <label className={classes.text} htmlFor="recipientAddress">Enter recipient address</label>
       <input className={classes.input} type="text" id="recipientAddress" onChange={addressInputChangeHandler} />
       <Button className={classes.button} onClick={formSubmissionHandler} variant='contained'>SEND</Button>
-      {txLink.length > 0 ? <Link href={txLink}>
-        View transaction on Etherscan
-      </Link> : null}
+      {txLink.length > 0 &&
+        <Link className={classes.link} href={txLink}>
+          <Button className={classes.button} variant='contained'>VIEW ON ETHERSCAN</Button>
+        </Link>
+      }
     </form>
   )
 }
