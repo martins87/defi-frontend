@@ -9,7 +9,25 @@ export const Balance = () => {
   const { account, library, chainId } = useWeb3React()
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.ethBalance);
+  const [blockHeight, setBlockHeight] = useState<number>(0);
   const timeInterval: number = 20; // seconds
+
+  const getLatestBlock = () => {
+    if (!!library) {
+      library
+        .getBlockNumber()
+        .then((blockNumber: number) => {
+          console.log('Latest block:', blockNumber);
+          if (blockNumber > blockHeight) {
+            setBlockHeight(blockNumber);
+          }
+        })
+        .catch((error: any) => {
+          console.log('Error:', error);
+          setBlockHeight(null);
+        })
+    }
+  }
 
   const updateBalance = () => {
     if (!!account && !!library) {
@@ -21,7 +39,21 @@ export const Balance = () => {
         })
         .catch((error: any) => {
           console.log('Error:', error);
+        });
+    }
+  }
+
+  const updateBalanceOnNewBlock = (blockNumber: number) => {
+    if (!!account && !!library) {
+      library
+      .getBalance(account, blockNumber)
+      .then((balance: any) => {
+          console.log('[updateBalanceOnNewBlock]', balance.toString());
+          dispatch(update(balance.toString()));
         })
+        .catch((error: any) => {
+          console.log('Error:', error);
+        });
     }
   }
 
@@ -31,28 +63,30 @@ export const Balance = () => {
 
   useEffect((): any => {
     if (!!account && !!library) {
-      let stale = false
+      let stale = false;
       library
         .getBalance(account)
         .then((balance: any) => {
           if (!stale) {
-            console.log('Balance:', balance);
-            console.log('toString:', balance.toString());
             dispatch(update(balance.toString()));
-            // setBalance(balance)
           }
         })
         .catch(() => {
           if (!stale) {
             dispatch(update(null));
-            // setBalance(null)
           }
         })
 
+      const updateBlockNumber = (blockNumber: number) => {
+        console.log('New block:', blockNumber);
+        updateBalanceOnNewBlock(blockNumber);
+        setBlockHeight(blockNumber);
+      }
+      library.on('block', updateBlockNumber);
+
       return () => {
-        stale = true
+        stale = true;
         dispatch(update(undefined));
-        // setBalance(undefined)
       }
     }
   }, [account, library, chainId]) // ensures refresh if referential identity of library doesn't change across chainIds
