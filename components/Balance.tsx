@@ -7,10 +7,27 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 
 export const Balance = () => {
   const { account, library, chainId } = useWeb3React()
-  // const [balance, setBalance] = useState(); // change to redux
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.ethBalance);
-  console.log('ETH balance from redux-toolkit store:', balance);
+  const timeInterval: number = 20; // seconds
+
+  const updateBalance = () => {
+    if (!!account && !!library) {
+      library
+        .getBalance(account)
+        .then((balance: any) => {
+          console.log(`${Date.now()}: ${balance.toString()} ETH`);
+          dispatch(update(balance.toString()));
+        })
+        .catch((error: any) => {
+          console.log('Error:', error);
+        })
+    }
+  }
+
+  useEffect(() => {
+    setInterval(() => updateBalance(), timeInterval * 1000);
+  }, []);
 
   useEffect((): any => {
     if (!!account && !!library) {
