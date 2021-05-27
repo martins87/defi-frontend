@@ -82,12 +82,39 @@ const Form = () => {
 
   return (
     <form className={classes.root}>
-      <label className={classes.text} htmlFor="daiAmount">Enter DAI Amount</label>
-      <input className={classes.input} type="number" id="daiAmount" onChange={daiInputChangeHandler} />
+      <label
+        className={classes.text}
+        htmlFor="daiAmount">
+          Enter DAI Amount
+      </label>
+      <input
+        className={classes.input}
+        type="number"
+        id="daiAmount"
+        onChange={daiInputChangeHandler}
+        autoComplete="off" />
+
       <DaiBalance />
-      <label className={classes.text} htmlFor="recipientAddress">Enter recipient address</label>
-      <input className={classes.input} type="text" id="recipientAddress" onChange={addressInputChangeHandler} />
-      <Button className={classes.button} onClick={formSubmissionHandler} variant='contained'>SEND</Button>
+
+      <label
+        className={classes.text}
+        htmlFor="recipientAddress">
+          Enter recipient address
+      </label>
+      <input
+        className={classes.input}
+        type="text"
+        id="recipientAddress"
+        onChange={addressInputChangeHandler}
+        autoComplete="off" />
+
+      <Button
+        className={classes.button}
+        onClick={formSubmissionHandler}
+        variant='contained'>
+          SEND
+      </Button>
+      
       {txLink.length > 0 &&
         <Link className={classes.link} href={txLink}>
           <Button className={classes.button} variant='contained'>VIEW ON ETHERSCAN</Button>

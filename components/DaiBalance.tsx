@@ -30,6 +30,12 @@ export const DaiBalance = () => {
     if (!!account && !!library) {
       const erc20 = new ERC20Service(library, DAI);
       getBalance(erc20);
+
+      const updateBlockNumber = (blockNumber: number) => {
+        console.log('[DaiBalance] new block:', blockNumber);
+        getBalance(erc20);
+      }
+      library.on('block', updateBlockNumber);
     }
   }, [account, library, chainId]); 
 
