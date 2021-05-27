@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useWeb3React } from "@web3-react/core";
 import { formatEther } from '@ethersproject/units';
 
-// import { update } from '../state/ethBalanceSlice';
 import { updateEthBalance } from '../state/balanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { BigNumber } from 'ethers';
 
 export const Balance = () => {
   const { account, library, chainId } = useWeb3React()
@@ -31,38 +31,25 @@ export const Balance = () => {
     }
   }
 
-  const updateBalance = () => {
+  const updateBalance = (blockNumber: any) => {
     if (!!account && !!library) {
-      library
-        .getBalance(account)
+      const balancePromise: Promise<BigNumber> = blockNumber === null ?
+        library.getBalance(account) :
+        library.getBalance(account, blockNumber);
+      balancePromise
         .then((balance: any) => {
           console.log(`${Date.now()}: ${balance.toString()} ETH`);
-          // dispatch(update(balance.toString()));
           dispatch(updateEthBalance(balance.toString()));
         })
         .catch((error: any) => {
           console.log('Error:', error);
-        });
-    }
-  }
-
-  const updateBalanceOnNewBlock = (blockNumber: number) => {
-    if (!!account && !!library) {
-      library
-      .getBalance(account, blockNumber)
-      .then((balance: any) => {
-          console.log('[updateBalanceOnNewBlock]', balance.toString());
-          // dispatch(update(balance.toString()));
-          dispatch(updateEthBalance(balance.toString()));
-        })
-        .catch((error: any) => {
-          console.log('Error:', error);
+          dispatch(updateEthBalance(null));
         });
     }
   }
 
   useEffect(() => {
-    setInterval(() => updateBalance(), timeInterval * 1000);
+    setInterval(() => updateBalance(null), timeInterval * 1000);
   }, []);
 
   useEffect((): any => {
@@ -72,20 +59,19 @@ export const Balance = () => {
         .getBalance(account)
         .then((balance: any) => {
           if (!stale) {
-            // dispatch(update(balance.toString()));
             dispatch(updateEthBalance(balance.toString()));
           }
         })
-        .catch(() => {
+        .catch((error: any) => {
           if (!stale) {
-            // dispatch(update(null));
+            console.log('Error:', error);
             dispatch(updateEthBalance(null));
           }
         })
 
       const updateBlockNumber = (blockNumber: number) => {
         console.log('New block:', blockNumber);
-        updateBalanceOnNewBlock(blockNumber);
+        updateBalance(blockNumber);
         setBlockHeight(blockNumber);
       }
       library.on('block', updateBlockNumber);
@@ -93,7 +79,6 @@ export const Balance = () => {
       return () => {
         stale = true;
         library.removeListener('block', updateBlockNumber);
-        // dispatch(update(undefined));
         dispatch(updateEthBalance(undefined));
       }
     }
@@ -101,11 +86,9 @@ export const Balance = () => {
 
   return (
     <>
-      <p>Balance:
-                {/* <span role="img" aria-label="gold">
-                    💰
-                </span> */}
-        <span>{balance === null ? 'Error' : balance ? ` Ξ${formatEther(balance)}` : ''}</span>
+      <p>
+        Balance:
+        <span>{balance === null ? 'Error' : balance ? ` Ξ ${formatEther(balance)}` : ''}</span>
       </p>
     </>
   )
