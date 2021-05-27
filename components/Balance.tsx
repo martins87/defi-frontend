@@ -9,6 +9,7 @@ export const Balance = () => {
   const { account, library, chainId } = useWeb3React()
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.ethBalance);
+  console.log('ETH balance from redux-toolkit store:', balance);
   const [blockHeight, setBlockHeight] = useState<number>(0);
   const timeInterval: number = 20; // seconds
 

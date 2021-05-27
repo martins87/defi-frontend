@@ -9,7 +9,7 @@ const initialState: BalanceState = {
 }
 
 export const balanceSlice = createSlice({
-    name: 'balance',
+    name: 'daiBalanceSlice',
     initialState,
     reducers: {
         update: (state, action: PayloadAction<string>) => { state.balance = action.payload }

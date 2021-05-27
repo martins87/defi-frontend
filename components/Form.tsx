@@ -25,16 +25,17 @@ const useStyles = makeStyles(theme => ({
     padding: '2rem 1rem 0.4rem 1rem',
     border: 'none',
     marginTop: '-20px',
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
     borderRadius: '4px',
-    zIndex: '1',
-    verticalAlign: 'bottom'
+    zIndex: 1,
+    verticalAlign: 'bottom',
+    outline: 'none'
   },
   text: {
     marginLeft: '1rem',
     fontSize: '12px',
     color: '#404040',
-    zIndex: '2'
+    zIndex: 2
   },
   link: {
     margin: 'auto'

@@ -11,18 +11,19 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 const useStyles = makeStyles(theme => ({
   text: {
     marginLeft: '1rem',
+    marginTop: '-18px',
     fontSize: '12px',
-    color: '#404040',
-    zIndex: '2'
+    color: 'blue',
+    zIndex: 2
   }
 }));
 
 export const DaiBalance = () => {
   const { account, library, chainId } = useWeb3React();
-  // const [daiBalance, setDaiBalance] = useState<string>();
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.daiBalance);
   console.log('DAI balance from redux-toolkit store:', balance);
+  const classes = useStyles();
 
   useEffect(() => {
     dispatch(update(''));
@@ -39,7 +40,7 @@ export const DaiBalance = () => {
 
   return (
     <>
-      <p>Balance:
+      <p className={classes.text}>Balance:
         {/* <span role="img" aria-label="gold">
           💰
         </span> */}
