@@ -5,7 +5,8 @@ import { makeStyles } from '@material-ui/core';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
-import { update } from '../state/daiBalanceSlice';
+// import { update } from '../state/daiBalanceSlice';
+import { updateDaiBalance } from '../state/balanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +27,8 @@ export const DaiBalance = () => {
   const classes = useStyles();
 
   useEffect(() => {
-    dispatch(update(''));
+    // dispatch(update(''));
+    dispatch(updateDaiBalance(''));
     if (!!account && !!library) {
       const erc20 = new ERC20Service(library, DAI);
       getBalance(erc20);
@@ -41,7 +43,8 @@ export const DaiBalance = () => {
 
   const getBalance = async (contractInstance: any) => {
     const balance = await contractInstance.balanceOf(account);
-    dispatch(update(balance.toString()));
+    // dispatch(update(balance.toString()));
+    dispatch(updateDaiBalance(balance.toString()));
   }
 
   return (

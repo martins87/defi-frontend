@@ -1,12 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import ethBalanceReducer from './ethBalanceSlice';
-import daiBalanceReducer from './daiBalanceSlice';
+import { rootSlice } from './balanceSlice';
 
 const store = configureStore({
     reducer: {
-        ethBalance: ethBalanceReducer,
-        daiBalance: daiBalanceReducer
+        ethBalance: rootSlice.ethBalanceReducer,
+        daiBalance: rootSlice.daiBalanceReducer
     }
 });
 

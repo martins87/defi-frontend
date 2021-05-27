@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useWeb3React } from "@web3-react/core";
 import { formatEther } from '@ethersproject/units';
 
-import { update } from '../state/ethBalanceSlice';
+// import { update } from '../state/ethBalanceSlice';
+import { updateEthBalance } from '../state/balanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 export const Balance = () => {
@@ -36,7 +37,8 @@ export const Balance = () => {
         .getBalance(account)
         .then((balance: any) => {
           console.log(`${Date.now()}: ${balance.toString()} ETH`);
-          dispatch(update(balance.toString()));
+          // dispatch(update(balance.toString()));
+          dispatch(updateEthBalance(balance.toString()));
         })
         .catch((error: any) => {
           console.log('Error:', error);
@@ -50,7 +52,8 @@ export const Balance = () => {
       .getBalance(account, blockNumber)
       .then((balance: any) => {
           console.log('[updateBalanceOnNewBlock]', balance.toString());
-          dispatch(update(balance.toString()));
+          // dispatch(update(balance.toString()));
+          dispatch(updateEthBalance(balance.toString()));
         })
         .catch((error: any) => {
           console.log('Error:', error);
@@ -69,12 +72,14 @@ export const Balance = () => {
         .getBalance(account)
         .then((balance: any) => {
           if (!stale) {
-            dispatch(update(balance.toString()));
+            // dispatch(update(balance.toString()));
+            dispatch(updateEthBalance(balance.toString()));
           }
         })
         .catch(() => {
           if (!stale) {
-            dispatch(update(null));
+            // dispatch(update(null));
+            dispatch(updateEthBalance(null));
           }
         })
 
@@ -87,7 +92,8 @@ export const Balance = () => {
 
       return () => {
         stale = true;
-        dispatch(update(undefined));
+        // dispatch(update(undefined));
+        dispatch(updateEthBalance(undefined));
       }
     }
   }, [account, library, chainId]) // ensures refresh if referential identity of library doesn't change across chainIds
