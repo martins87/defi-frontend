@@ -92,6 +92,7 @@ export const Balance = () => {
 
       return () => {
         stale = true;
+        library.removeListener('block', updateBlockNumber);
         // dispatch(update(undefined));
         dispatch(updateEthBalance(undefined));
       }

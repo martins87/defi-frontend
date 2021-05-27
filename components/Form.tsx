@@ -34,8 +34,8 @@ const useStyles = makeStyles(theme => ({
   text: {
     marginLeft: '1rem',
     fontSize: '12px',
-    color: '#404040',
-    zIndex: 2
+    zIndex: 2,
+    color: '#404040'
   },
   link: {
     margin: 'auto'

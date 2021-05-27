@@ -30,14 +30,24 @@ export const DaiBalance = () => {
     // dispatch(update(''));
     dispatch(updateDaiBalance(''));
     if (!!account && !!library) {
+      let stale = false;
       const erc20 = new ERC20Service(library, DAI);
-      getBalance(erc20);
+
+      if (!stale) {
+        getBalance(erc20);
+      }
 
       const updateBlockNumber = (blockNumber: number) => {
         console.log('[DaiBalance] new block:', blockNumber);
         getBalance(erc20);
       }
       library.on('block', updateBlockNumber);
+
+      return () => {
+        stale = true;
+        library.removeListener('block', updateBlockNumber);
+        dispatch(updateDaiBalance(undefined));
+      }
     }
   }, [account, library, chainId]); 
 
