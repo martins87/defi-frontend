@@ -5,18 +5,76 @@ import {
   NoEthereumProviderError,
   UserRejectedRequestError as UserRejectedRequestErrorInjected
 } from '@web3-react/injected-connector'
+import { makeStyles } from '@material-ui/core';
+// import { PowerSettingsNewIcon } from '@material-ui/icons';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 
 import { useEagerConnect, useInactiveListener } from '../hooks';
 import { injected, network } from '../connectors';
+import Spinner from './Spinner';
+import Account from './Account';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#6200EE',
+    position: 'fixed',
+    top: '0',
+    width: '100%',
+    height: '8vh',
+    display: 'grid',
+  },
+  elements: {
+    // backgroundColor: 'yellow',
+    width: '80%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 'auto'
+  },
+  text: {
+    color: '#FFFFFF'
+  },
+  // style={{
+  //   height: '3rem',
+  //   borderRadius: '1rem',
+  //   borderColor: activating ? 'orange' : connected ? 'green' : 'unset',
+  //   cursor: disabled ? 'unset' : 'pointer',
+  //   position: 'relative'
+  // }}
+  button: {
+    backgroundColor: '#FFFFFF',
+    height: '1.8rem',
+    width: '8rem',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '10px !important',
+    fontWeight: 'bold',
+    color: '#6200EE'
+  },
+  deactivateBtn: {
+    backgroundColor: '#FFFFFF',
+    height: '1.8rem',
+    width: '1.8rem',
+    display: 'grid',
+    alignItens: 'center',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '10px !important',
+    fontWeight: 'bold',
+    color: '#6200EE'
+  }
+}))
 
 enum ConnectorNames {
-  Injected = 'Injected',
-  Network = 'Network'
+  Injected = 'CONNECT WALLET',
+  // Network = 'Network'
 }
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
   [ConnectorNames.Injected]: injected,
-  [ConnectorNames.Network]: network
+  // [ConnectorNames.Network]: network
 }
 
 const getErrorMessage = (error: Error) => {
@@ -39,6 +97,7 @@ const getErrorMessage = (error: Error) => {
 const Header = () => {
   const context = useWeb3React<Web3Provider>();
   const { connector, chainId, activate, deactivate, active, error } = context;
+  const classes = useStyles();
 
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>();
@@ -58,84 +117,96 @@ const Header = () => {
 
   return (
     <React.Fragment>
-      <div
-        style={{
-          display: 'grid',
-          gridGap: '1rem',
-          gridTemplateColumns: '1fr 1fr',
-          maxWidth: '20rem',
-          margin: 'auto'
-        }}
-      >
-        {Object.keys(connectorsByName).map(name => {
-          const currentConnector = connectorsByName[name]
-          const activating = currentConnector === activatingConnector
-          const connected = currentConnector === connector
-          const disabled = !triedEager || !!activatingConnector || connected || !!error
-
-          return (
-            <button
-              style={{
-                height: '3rem',
-                borderRadius: '1rem',
-                borderColor: activating ? 'orange' : connected ? 'green' : 'unset',
-                cursor: disabled ? 'unset' : 'pointer',
-                position: 'relative'
-              }}
-              disabled={disabled}
-              key={name}
-              onClick={() => {
-                setActivatingConnector(currentConnector)
-                activate(connectorsByName[name])
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '0',
-                  left: '0',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: 'black',
-                  margin: '0 0 0 1rem'
-                }}
-              >
-                {/* {activating && <Spinner color={'black'} style={{ height: '25%', marginLeft: '-1rem' }} />} */}
-                {connected && (
-                  <span role="img" aria-label="check">
-                    ✅
-                  </span>
-                )}
-              </div>
-              {name}
-            </button>
-          )
-        })}
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {(active || error) && (
-          <button
-            style={{
-              height: '3rem',
-              marginTop: '2rem',
-              borderRadius: '1rem',
-              borderColor: 'red',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              deactivate()
-            }}
+      <div className={classes.root}>
+        <div className={classes.elements}>
+          <div className={classes.text}>
+            DeFi App
+          </div>
+          <div
+          // style={{
+          //   display: 'grid',
+          //   gridGap: '1rem',
+          //   gridTemplateColumns: '1fr 1fr',
+          //   maxWidth: '20rem',
+          //   margin: 'auto'
+          // }}
           >
-            Deactivate
-          </button>
-        )}
+            {!active && Object.keys(connectorsByName).map(name => {
+              const currentConnector = connectorsByName[name]
+              const activating = currentConnector === activatingConnector
+              const connected = currentConnector === connector
+              const disabled = !triedEager || !!activatingConnector || connected || !!error
 
-        {!!error && <h4 style={{ marginTop: '1rem', marginBottom: '0' }}>{getErrorMessage(error)}</h4>}
+              return (
+                <button
+                  // style={{
+                  //   height: '3rem',
+                  //   borderRadius: '1rem',
+                  //   borderColor: activating ? 'orange' : connected ? 'green' : 'unset',
+                  //   cursor: disabled ? 'unset' : 'pointer',
+                  //   position: 'relative'
+                  // }}
+                  className={classes.button}
+                  disabled={disabled}
+                  key={name}
+                  onClick={() => {
+                    setActivatingConnector(currentConnector)
+                    activate(connectorsByName[name])
+                  }}
+                >
+                  <div
+                  // style={{
+                  //   position: 'absolute',
+                  //   top: '0',
+                  //   left: '0',
+                  //   height: '100%',
+                  //   display: 'flex',
+                  //   alignItems: 'center',
+                  //   color: 'black',
+                  //   margin: '0 0 0 1rem'
+                  // }}
+                  >
+                    {activating && <Spinner color={'black'} style={{ height: '25%', marginLeft: '-1rem' }} />}
+                    {/* {connected && (
+                    <span role="img" aria-label="check">
+                      ✅
+                    </span>
+                  )} */}
+                  </div>
+                  {name}
+                </button>
+              )
+            })}
+
+            {active && <Account />}
+
+            <div
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {(active || error) && (
+                <button
+                  // style={{
+                  //   height: '3rem',
+                  //   marginTop: '2rem',
+                  //   borderRadius: '1rem',
+                  //   borderColor: 'red',
+                  //   cursor: 'pointer'
+                  // }}
+                  className={classes.deactivateBtn}
+                  onClick={() => {
+                    deactivate()
+                  }}
+                >
+                  <PowerSettingsNewIcon />
+                </button>
+              )}
+
+              {!!error && <h4 style={{ marginTop: '1rem', marginBottom: '0' }}>{getErrorMessage(error)}</h4>}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {!!(connector === connectorsByName[ConnectorNames.Network] && chainId) && (
+      {/* {!!(connector === connectorsByName[ConnectorNames.Network] && chainId) && (
         <button
           style={{
             height: '3rem',
@@ -148,7 +219,7 @@ const Header = () => {
         >
           Switch Networks
         </button>
-      )}
+      )} */}
     </React.Fragment>
   )
 }

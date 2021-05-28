@@ -12,6 +12,7 @@
     "@ethersproject/providers": "^5.2.0",
     "@ethersproject/units": "^5.2.0",
     "@material-ui/core": "latest",
+    "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.5.1",
     "@types/node": "^15.6.0",
     "@types/react": "^17.0.6",

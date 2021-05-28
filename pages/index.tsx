@@ -2,7 +2,7 @@ import Head from 'next/head'
 
 import styles from '../styles/Home.module.css'
 import Header from '../components/Header';
-import Account from '../components/Account';
+// import Account from '../components/Account';
 import Balance from '../components/Balance';
 import Form from '../components/Form';
 
@@ -15,10 +15,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>DeFi Frontend</h1>
-
       <Header />
-      <Account />
+      {/* <Account /> */}
       <Balance />
       <Form /> 
     </div>

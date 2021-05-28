@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Input, Link, makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import { useWeb3React } from '@web3-react/core';
 
 import { ERC20Service } from '../services/erc20';
