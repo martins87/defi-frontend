@@ -19,6 +19,15 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     fontSize: '8px !important',
   },
+  buttonDisabled: {
+    background: '#EFE6FD',
+    color: 'white',
+    fontFamily: 'sans-serif',
+    marginBottom: '1rem',
+    margin: 'auto',
+    fontSize: '8px !important',
+    cursor: 'not-allowed'
+  },
   input: {
     background: '#EDEDED',
     width: '400px',
@@ -45,8 +54,9 @@ const useStyles = makeStyles(theme => ({
 const Form = () => {
   const { library } = useWeb3React();
   const [daiAmount, setDaiAmount] = useState();
-  const [recipientAddress, setRecipientAddress] = useState();
-  const [txLink, setTxLink] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState<string>();
+  const [txLink, setTxLink] = useState<string>('');
+  const [txPending, setTxPending] = useState<boolean>(false);
   const classes = useStyles();
 
   const daiInputChangeHandler = (event: any) => {
@@ -76,6 +86,16 @@ const Form = () => {
   const transfer = async (recipient: any, amount: any) => {
     const erc20 = new ERC20Service(library, DAI);
     const tx = await erc20.transfer(recipientAddress, daiAmount);
+    setTxPending(true);
+    library
+      .waitForTransaction(tx.hash)
+      .then((res: any) => {
+        console.log('res:', res);
+        setTxPending(false);
+      })
+      .catch((error: any) => {
+        console.log('Error:', error);
+      });
     setTxLink(`https://ropsten.etherscan.io/tx/${tx.hash}`);
     console.log('tx:', tx);
   }
@@ -109,16 +129,19 @@ const Form = () => {
         autoComplete="off" />
 
       <Button
-        className={classes.button}
+        className={txPending ? classes.buttonDisabled : classes.button}
         onClick={formSubmissionHandler}
         variant='contained'>
           SEND
       </Button>
       
       {txLink.length > 0 &&
-        <Link className={classes.link} href={txLink}>
+        <a
+          className={classes.link}
+          href={txLink}
+          target="_blank">
           <Button className={classes.button} variant='contained'>VIEW ON ETHERSCAN</Button>
-        </Link>
+        </a>
       }
     </form>
   )

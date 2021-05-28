@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { BigNumber } from 'ethers';
 
 export const Balance = () => {
-  const { account, library, chainId } = useWeb3React()
+  const { account, library, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.ethBalance);
   console.log('ETH balance from redux-toolkit store:', balance);
