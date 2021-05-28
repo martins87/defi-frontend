@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const DaiBalance = () => {
+const DaiBalance = () => {
   const { account, library, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.daiBalance);
@@ -63,3 +63,5 @@ export const DaiBalance = () => {
     </>
   );
 }
+
+export default DaiBalance;

@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 
 import { ERC20Service } from '../services/erc20';
 import { DAI } from '../constants/contracts';
-import { DaiBalance } from './DaiBalance'
+import DaiBalance from './DaiBalance'
 
 const useStyles = makeStyles(theme => ({
   root: {

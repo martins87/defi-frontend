@@ -6,7 +6,7 @@ import { updateEthBalance } from '../state/balanceSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { BigNumber } from 'ethers';
 
-export const Balance = () => {
+const Balance = () => {
   const { account, library, chainId } = useWeb3React();
   const dispatch = useAppDispatch();
   const { balance } = useAppSelector(state => state.ethBalance);
@@ -94,3 +94,4 @@ export const Balance = () => {
   )
 }
 
+export default Balance;
